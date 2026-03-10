@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'pages/api_test_page.dart'; // <-- NUEVO: ir a la pantalla de API
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -8,36 +9,33 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // 🔹 KEY del formulario para validar
-  final _formKey = GlobalKey<FormState>(); // <-- NUEVO (controla validación)
+  // KEY para validar formulario
+  final _formKey = GlobalKey<FormState>();
 
-  // 🔹 Controllers para capturar lo que escribe el usuario
-  final TextEditingController _emailController =
-      TextEditingController(); // <-- NUEVO
-  final TextEditingController _passwordController =
-      TextEditingController(); // <-- NUEVO
+  // Controllers
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // 🔹 IMPORTANTE: liberar memoria
-    _emailController.dispose(); // <-- NUEVO
-    _passwordController.dispose(); // <-- NUEVO
+    _emailController.dispose();
+    _passwordController.dispose();
+
     super.dispose();
   }
 
   void _login() {
-    // 🔹 Validar formulario antes de continuar
     if (_formKey.currentState!.validate()) {
-      // <-- NUEVO (validación)
-
-      String email = _emailController.text; // <-- Captura datos
+      String email = _emailController.text;
       String password = _passwordController.text;
 
-      // 🔹 Simulación de login
+      // Validación simple
       if (email == "admin@puerta.com" && password == "1234") {
-        ScaffoldMessenger.of(
+        // Navegar a la pantalla de API
+        Navigator.push(
           context,
-        ).showSnackBar(const SnackBar(content: Text("Acceso concedido")));
+          MaterialPageRoute(builder: (context) => const ApiTestPage()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Credenciales incorrectas")),
@@ -49,29 +47,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login - Control de Acceso")),
+      appBar: AppBar(title: const Text("Login")),
+
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
+
         child: Form(
-          // <-- NUEVO (FORM)
           key: _formKey,
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 🔹 Campo Email
               TextFormField(
-                controller: _emailController, // <-- CONECTADO AL CONTROLLER
+                controller: _emailController,
+
                 decoration: const InputDecoration(
-                  labelText: "Correo electrónico",
+                  labelText: "Correo",
                   border: OutlineInputBorder(),
                 ),
+
                 validator: (value) {
-                  // <-- VALIDACIÓN
                   if (value == null || value.isEmpty) {
-                    return "Este campo es obligatorio";
-                  }
-                  if (!value.contains("@")) {
-                    return "Ingrese un correo válido";
+                    return "Campo obligatorio";
                   }
                   return null;
                 },
@@ -79,20 +76,19 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 20),
 
-              // 🔹 Campo Password
               TextFormField(
-                controller: _passwordController, // <-- CONECTADO
-                obscureText: true, // <-- Oculta contraseña
+                controller: _passwordController,
+
+                obscureText: true,
+
                 decoration: const InputDecoration(
                   labelText: "Contraseña",
                   border: OutlineInputBorder(),
                 ),
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Ingrese su contraseña";
-                  }
-                  if (value.length < 4) {
-                    return "Mínimo 4 caracteres";
+                    return "Campo obligatorio";
                   }
                   return null;
                 },
@@ -100,10 +96,10 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 30),
 
-              // 🔹 Botón Login
               ElevatedButton(
-                onPressed: _login, // <-- LLAMA FUNCIÓN
-                child: const Text("Iniciar Sesión"),
+                onPressed: _login,
+
+                child: const Text("Iniciar sesión"),
               ),
             ],
           ),
